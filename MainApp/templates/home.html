@@ -1,0 +1,155 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>WordStack</title>
+
+  <!-- Bootstrap core CSS -->
+
+  <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'modern-business.css' %}" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top justify-content-center" style="display: inline; text-align: center; align-items: center;">
+    <div class="container text-center" style="text-align: center; align-items: center;">
+      <a class="navbar-brand text-center" style="text-align: center; align-items: center;" href="/">Word Stack</a>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+  <br>
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active">
+        Home
+      </li>
+      <li class="breadcrumb-item">Search</li>
+    </ol>
+
+
+    <style>
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
+    </style>
+
+    <div class="modal" id="uploading_documents_modal" role="dialog" tabindex="-1">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploading_documents_modal_title" style="text-align: center; width: 100%;">Processing Documents</h5>
+          </div>
+          <div class="modal-body" id="loaderdiv" style="text-align: center; align-content: center; align-items: center;">
+            <div class="loader" style="text-align: center; border: 16px solid #f3f3f3; border-top: 16px solid #3498db; border-radius: 50%; width:120px; height: 120px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
+          </div>
+          <div style="display: block; align-self: center;">
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-dismiss="modal" onclick="setInputToDefault();" id="uploading_ok_button" style="display: none;" type="button">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+      <div class="container-fluid">
+        <br>
+      <h3 class="mt-4" style="text-align: center;">Upload PDF Documents Using The Form Below</h3>
+      <br><br>
+      <form class="navbar-form navbar-left" id="documents_form" style="text-align: center;" action="/handle_documents" method="POST">
+          <input id="pdf_input" type="file" class="form-control col-lg-8" name="documents" accept="application/pdf" style="margin: 0 auto;" multiple>
+          <br>
+          <br>
+          <button type="button" onclick="ShowModal();" class="btn btn-primary">Upload Documents</button>
+        </form>
+        <script>
+            function handle_file_upload() {
+              var form = document.getElementById("documents_form");
+              var formData = new FormData(form);
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST",'/handle_documents/', true);
+              xhr.send(formData);
+
+              xhr.onreadystatechange = function() {
+                  if (this.readyState == 4 && this.status == 200) {
+                      console.log(this.responseText);
+                      var received_data = this.responseText;
+                      var ld = document.getElementById('loaderdiv');
+                      if (received_data.endsWith(".csv")) {
+                        var randvar = '<p style="text-align: center; font-weight:700; font-size: 150%;">File is Ready: <a href="' + received_data + '" target="_blank">Download File</a>'
+                        ld.innerHTML = randvar
+                      } else {
+                        var var1 = "<p style='text-align: center; font-weight: 700; font-size: 150%;'>Server Response: " + this.responseText + "</p>"
+                        ld.innerHTML = var1
+                      }
+                      
+                      uploading_ok_button.style.display = "block";
+                      uploading_documents_modal_title.innerHTML = "Processing Completed!"
+
+                  }
+              };
+              return false;
+            }
+
+
+          function ShowModal() {
+            if (pdf_input.value != ''){
+              $("#uploading_documents_modal").modal({backdrop: 'static',keyboard: false});
+              handle_file_upload();
+            }
+          }
+          function setInputToDefault(){
+            pdf_input.value = pdf_input.defaultValue;
+            loaderdiv.innerHTML = '<div class="loader" style="text-align: center; border: 16px solid #f3f3f3; border-top: 16px solid #3498db; border-radius: 50%; width:120px; height: 120px; animation: spin 2s linear infinite; margin: 0 auto;"></div>'
+            uploading_ok_button.style.display = "none";
+          }
+        </script>
+    </div>
+    </div>
+    
+
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <br><br><br><br><br><br><br>
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+
+  <script src="{% static 'jquery.min.js' %}"></script>
+  <script src="{% static 'bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>
