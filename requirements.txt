@@ -3,7 +3,7 @@ chardet==3.0.4
 cryptography==3.0
 Django==2.2.6
 django-cors-headers==3.1.1
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 pdfminer.six==20200720
 pycparser==2.20
 pytz==2020.1
